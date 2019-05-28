@@ -1,17 +1,20 @@
 package com.example.timetablemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+import adapter.MyPagerAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -68,6 +71,17 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.custom_actionbar, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.add){
+            Intent intent = new Intent(HomeActivity.this, NewSubject.class);
+            startActivityForResult(intent, 1);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private List<Fragment> getFragments() {
