@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,13 +18,25 @@ import java.util.List;
 import adapter.MyPagerAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ca.antonious.materialdaypicker.MaterialDayPicker;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements ListPopulateHandle{
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
+
+    public static ListPopulateHandle listPopulateHandle;
+
+    public List<FragmentListener> fragmentListeners = new ArrayList<>();
+    public final List<Fragment> fragments = getFragments();
+
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +44,18 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        listPopulateHandle = this;
 
-        final List<Fragment> fragments = getFragments();
+
         final MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(1);
         viewPager.setOffscreenPageLimit(1000);
+
         //noinspection deprecation
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             int currentPage;
+
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
@@ -76,9 +92,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.add){
-            Intent intent = new Intent(HomeActivity.this, NewSubject.class);
-            startActivityForResult(intent, 1);
+        if (id == R.id.add) {
+            Intent intent = new Intent(this, NewSubject.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -97,7 +113,18 @@ public class HomeActivity extends AppCompatActivity {
         fList.add(MyFragment.newInstance("SUNDAY"));
         fList.add(MyFragment.newInstance("MONDAY"));
 
+        for(int i = 0 ; i < fList.size(); i++){
+            fragmentListeners.add((FragmentListener) fList.get(i));
+        }
+
         return fList;
     }
 
+
+
+
+    @Override
+    public void clickHandle(String sub_name, String time, List<MaterialDayPicker.Weekday> weekdays) {
+        fragmentListeners.get(3).action();
+    }
 }
