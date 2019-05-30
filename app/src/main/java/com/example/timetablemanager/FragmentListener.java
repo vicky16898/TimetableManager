@@ -1,5 +1,6 @@
 package com.example.timetablemanager;
 
 public interface FragmentListener {
-    void action();
+    void populateList(String subjectName, String time, String day);
+    String getFragmentName();
 }

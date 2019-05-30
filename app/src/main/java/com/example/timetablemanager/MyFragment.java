@@ -3,13 +3,18 @@ package com.example.timetablemanager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import adapter.TimeTableAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -19,10 +24,12 @@ public class MyFragment extends Fragment implements FragmentListener {
 
     private static final String ARG_PARAM = "param";
     public String fragmentName;
+    private List<Subject> subjects = new ArrayList<>();
+    private TimeTableAdapter timeTableAdapter;
 
 
     @BindView(R.id.list)
-    ListView list;
+    RecyclerView list;
 
 
     public MyFragment() {
@@ -44,12 +51,26 @@ public class MyFragment extends Fragment implements FragmentListener {
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         ButterKnife.bind(this, view);
         fragmentName = getArguments().getString(ARG_PARAM);
+        timeTableAdapter = new TimeTableAdapter(subjects);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        list.setLayoutManager(mLayoutManager);
+        list.setItemAnimator(new DefaultItemAnimator());
+        list.setAdapter(timeTableAdapter);
+
         return view;
     }
 
 
     @Override
-    public void action() {
-        Log.e("FRAGMENT_NAME", fragmentName);
+    public void populateList(String subjectName, String time, String day) {
+
+        subjects.add(new Subject(subjectName, time, day));
+        timeTableAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public String getFragmentName() {
+        return fragmentName;
     }
 }

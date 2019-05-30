@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ca.antonious.materialdaypicker.MaterialDayPicker;
 
-public class HomeActivity extends AppCompatActivity implements ListPopulateHandle{
+public class HomeActivity extends AppCompatActivity implements ListPopulateHandle {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -33,11 +33,6 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     public final List<Fragment> fragments = getFragments();
 
 
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +40,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         listPopulateHandle = this;
-
+        setFragmentListeners();
 
         final MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(myPagerAdapter);
@@ -112,19 +107,27 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         fList.add(MyFragment.newInstance("SATURDAY"));
         fList.add(MyFragment.newInstance("SUNDAY"));
         fList.add(MyFragment.newInstance("MONDAY"));
-
-        for(int i = 0 ; i < fList.size(); i++){
-            fragmentListeners.add((FragmentListener) fList.get(i));
-        }
-
         return fList;
     }
 
-
+    public void setFragmentListeners() {
+        for (int i = 0; i < fragments.size(); i++) {
+            fragmentListeners.add((FragmentListener) fragments.get(i));
+        }
+    }
 
 
     @Override
     public void clickHandle(String sub_name, String time, List<MaterialDayPicker.Weekday> weekdays) {
-        fragmentListeners.get(3).action();
+
+        for(int i =0; i < fragmentListeners.size(); i++){
+            FragmentListener fragmentListener = fragmentListeners.get(i);
+            for(int k =0; k < weekdays.size(); k++){
+                if((fragmentListener.getFragmentName()).equals(String.valueOf(weekdays.get(k)))){
+                    fragmentListener.populateList(sub_name, time, String.valueOf(weekdays.get(k)));
+                }
+            }
+        }
+
     }
 }
