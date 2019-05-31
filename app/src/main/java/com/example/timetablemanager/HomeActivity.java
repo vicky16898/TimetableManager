@@ -1,7 +1,9 @@
 package com.example.timetablemanager;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import java.util.List;
 
 
 import adapter.MyPagerAdapter;
+import adapter.myDbAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ca.antonious.materialdaypicker.MaterialDayPicker;
@@ -31,6 +34,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
 
     public List<FragmentListener> fragmentListeners = new ArrayList<>();
     public final List<Fragment> fragments = getFragments();
+    private myDbAdapter dbAdapter;
 
 
     @Override
@@ -38,6 +42,8 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        dbAdapter = new myDbAdapter(this);
+
         setSupportActionBar(toolbar);
         listPopulateHandle = this;
         setFragmentListeners();
@@ -46,6 +52,13 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(1);
         viewPager.setOffscreenPageLimit(1000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initialiseFrag();
+            }
+        }, 100); // need to fix the delay;
 
         //noinspection deprecation
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -120,14 +133,42 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     @Override
     public void clickHandle(String sub_name, String time, List<MaterialDayPicker.Weekday> weekdays) {
 
-        for(int i =0; i < fragmentListeners.size(); i++){
+        for (int i = 0; i < fragmentListeners.size(); i++) {
             FragmentListener fragmentListener = fragmentListeners.get(i);
-            for(int k =0; k < weekdays.size(); k++){
-                if((fragmentListener.getFragmentName()).equals(String.valueOf(weekdays.get(k)))){
+            for (int k = 0; k < weekdays.size(); k++) {
+                if ((fragmentListener.getFragmentName()).equals(String.valueOf(weekdays.get(k)))) {
+                    if (fragmentListener == fragmentListeners.get(0) || fragmentListener == fragmentListeners.get(8)) {
+
+                    } else {
+                        dbAdapter.insertData(sub_name, time, String.valueOf(weekdays.get(k)));
+                    }
                     fragmentListener.populateList(sub_name, time, String.valueOf(weekdays.get(k)));
                 }
             }
         }
 
+    }
+
+    public void initialiseFrag() {
+        Cursor cursor = dbAdapter.fetch();
+        if (cursor.getCount() == 0) {
+            Log.d("Empty Database", String.valueOf(cursor.getCount()));
+            return;
+        }
+
+        List<Subject> dbList = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            dbList.add(new Subject(cursor.getString(1), cursor.getString(2), cursor.getString(3)));
+        }
+
+
+        for (int index = 0; index < fragmentListeners.size(); index++) {
+            FragmentListener fragmentListener = fragmentListeners.get(index);
+            for (int secondIndex = 0; secondIndex < dbList.size(); secondIndex++) {
+                if (dbList.get(secondIndex).getDayOfWeek().equals(fragmentListener.getFragmentName())) {
+                    fragmentListener.populateList(dbList.get(secondIndex).getSubjectName(), dbList.get(secondIndex).getTime(), dbList.get(secondIndex).getDayOfWeek());
+                }
+            }
+        }
     }
 }

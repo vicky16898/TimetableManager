@@ -4,6 +4,7 @@ package com.example.timetablemanager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,6 +56,7 @@ public class MyFragment extends Fragment implements FragmentListener {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         list.setLayoutManager(mLayoutManager);
         list.setItemAnimator(new DefaultItemAnimator());
+        list.addItemDecoration(new DividerItemDecoration(list.getContext(), ((LinearLayoutManager) mLayoutManager).getOrientation()));
         list.setAdapter(timeTableAdapter);
 
         return view;
