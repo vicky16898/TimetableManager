@@ -2,6 +2,7 @@ package com.example.timetablemanager;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -31,10 +32,12 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     ViewPager viewPager;
 
     public static ListPopulateHandle listPopulateHandle;
+    public List<Subject> dbList = new ArrayList<>();
 
     public List<FragmentListener> fragmentListeners = new ArrayList<>();
     public final List<Fragment> fragments = getFragments();
     private myDbAdapter dbAdapter;
+    public DatabaseFetchTask databaseFetchTask;
 
 
     @Override
@@ -43,6 +46,8 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         dbAdapter = new myDbAdapter(this);
+        databaseFetchTask = new DatabaseFetchTask();
+        databaseFetchTask.execute();
 
         setSupportActionBar(toolbar);
         listPopulateHandle = this;
@@ -53,12 +58,6 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         viewPager.setCurrentItem(1);
         viewPager.setOffscreenPageLimit(1000);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                initialiseFrag();
-            }
-        }, 100); // need to fix the delay;
 
         //noinspection deprecation
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -150,18 +149,6 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     }
 
     public void initialiseFrag() {
-        Cursor cursor = dbAdapter.fetch();
-        if (cursor.getCount() == 0) {
-            Log.d("Empty Database", String.valueOf(cursor.getCount()));
-            return;
-        }
-
-        List<Subject> dbList = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            dbList.add(new Subject(cursor.getString(1), cursor.getString(2), cursor.getString(3)));
-        }
-
-
         for (int index = 0; index < fragmentListeners.size(); index++) {
             FragmentListener fragmentListener = fragmentListeners.get(index);
             for (int secondIndex = 0; secondIndex < dbList.size(); secondIndex++) {
@@ -169,6 +156,40 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
                     fragmentListener.populateList(dbList.get(secondIndex).getSubjectName(), dbList.get(secondIndex).getTime(), dbList.get(secondIndex).getDayOfWeek());
                 }
             }
+        }
+    }
+
+    //ASYNCHRONOUS TASK INNER CLASS;
+    public class DatabaseFetchTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = dbAdapter.fetch();
+            if (cursor.getCount() == 0) {
+                Log.d("Empty Database", String.valueOf(cursor.getCount()));
+                return null;
+            }
+
+            dbList = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                dbList.add(new Subject(cursor.getString(1), cursor.getString(2), cursor.getString(3)));
+            }
+            cursor.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.e("DB LIST SIZE", String.valueOf(dbList.size()));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initialiseFrag();
+                }
+            }, 50);
+
+
         }
     }
 }
