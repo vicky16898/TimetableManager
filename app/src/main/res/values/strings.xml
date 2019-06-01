@@ -8,5 +8,10 @@
     <string name="save">SAVE</string>
     <string name="name_of_the_subject">Name of the subject</string>
     <string name="_8_00_am">8:30 AM</string>
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
     <string name="subject">SUBJECT</string>
+    <string name="bunk_manager">BUNK MANAGER</string>
+    <string name="timetable_manager">TIMETABLE MANAGER</string>
+    <string name="nav_bar">NAV BAR</string>
 </resources>
