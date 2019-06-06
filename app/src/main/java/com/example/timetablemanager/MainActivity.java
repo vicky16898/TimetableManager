@@ -15,6 +15,7 @@ import android.view.MenuItem;
 
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,10 +74,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             }
             case R.id.ttm: {
+
                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                 startActivity(intent);
-                finish();
-                drawerLayout.closeDrawer(GravityCompat.START);
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(300);
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
                 return true;
             }
         }
