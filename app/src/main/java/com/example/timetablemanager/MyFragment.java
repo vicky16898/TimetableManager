@@ -70,6 +70,12 @@ public class MyFragment extends Fragment implements FragmentListener {
 
     }
 
+    @Override
+    public void updateList(int i) {
+        subjects.remove(i);
+        timeTableAdapter.notifyDataSetChanged();
+    }
+
 
     @Override
     public String getFragmentName() {

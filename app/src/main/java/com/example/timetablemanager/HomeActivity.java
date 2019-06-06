@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     public static ListPopulateHandle listPopulateHandle;
     public List<Subject> dbList = new ArrayList<>();
 
-    public List<FragmentListener> fragmentListeners = new ArrayList<>();
+    public static List<FragmentListener> fragmentListeners = new ArrayList<>();
     public final List<Fragment> fragments = getFragments();
     private myDbAdapter dbAdapter;
     public DatabaseFetchTask databaseFetchTask;

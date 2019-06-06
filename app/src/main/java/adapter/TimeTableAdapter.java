@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.example.timetablemanager.HomeActivity;
 import com.example.timetablemanager.R;
 import com.example.timetablemanager.Subject;
 
@@ -81,7 +82,13 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
 
                     public void onClick(DialogInterface dialog, int which) {
                         dbAdapter.delete(subjectList.get(pos).getSubjectName(), subjectList.get(pos).getDayOfWeek());
+                        if (subjectList.get(pos).getDayOfWeek().equals("MONDAY")) {
+                            HomeActivity.fragmentListeners.get(8).updateList(pos);
+                        } else if (subjectList.get(pos).getSubjectName().equals("SUNDAY")) {
+                            HomeActivity.fragmentListeners.get(0).updateList(pos);
+                        }
                         subjectList.remove(pos);
+
                         notifyDataSetChanged();
                         dialog.dismiss();
                     }
