@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
                         dbAdapter.delete(subjectList.get(pos).getSubjectName(), subjectList.get(pos).getDayOfWeek());
                         if (subjectList.get(pos).getDayOfWeek().equals("MONDAY")) {
                             HomeActivity.fragmentListeners.get(8).updateList(pos);
-                        } else if (subjectList.get(pos).getSubjectName().equals("SUNDAY")) {
+                        } else if (subjectList.get(pos).getDayOfWeek().equals("SUNDAY")) {
                             HomeActivity.fragmentListeners.get(0).updateList(pos);
                         }
                         subjectList.remove(pos);
