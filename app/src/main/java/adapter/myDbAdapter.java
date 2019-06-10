@@ -32,12 +32,15 @@ public class myDbAdapter {
 
     }
 
-    public int delete(String name, String day) {
+    public void delete(long rowId) {
         SQLiteDatabase db = myHelper.getWritableDatabase();
-        String[] whereArgs = {name, day};
 
-        int count = db.delete(myDbHelper.TABLE_NAME, myDbHelper.NAME + " = ? AND " + myDbHelper.DAY + " = ?", whereArgs);
-        return count;
+
+        db.delete(myDbHelper.TABLE_NAME, myDbHelper.UID + " = ?",
+                new String[]{String.valueOf(rowId)});
+        db.close();
+
+
     }
 
     static class myDbHelper extends SQLiteOpenHelper {

@@ -96,8 +96,9 @@ public class NewSubject extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             } else {
-                HomeActivity.listPopulateHandle.clickHandle(subject_name, time, dayPickerList);
                 finish();
+                HomeActivity.listPopulateHandle.clickHandle(subject_name, time, dayPickerList);
+
             }
             return true;
         }

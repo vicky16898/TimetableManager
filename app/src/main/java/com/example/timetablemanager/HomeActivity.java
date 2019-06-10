@@ -1,6 +1,8 @@
 package com.example.timetablemanager;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
+    private long db_id = 0;
     public static ListPopulateHandle listPopulateHandle;
     public List<Subject> dbList = new ArrayList<>();
 
@@ -46,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
         dbAdapter = new myDbAdapter(this);
         databaseFetchTask = new DatabaseFetchTask();
         databaseFetchTask.execute();
@@ -158,16 +162,16 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
     @Override
     public void clickHandle(String sub_name, String time, List<MaterialDayPicker.Weekday> weekdays) {
 
+        for (int pos = 0; pos < weekdays.size(); pos++) {
+            db_id = dbAdapter.insertData(sub_name, time, String.valueOf(weekdays.get(pos)));
+            Log.d("elementId", String.valueOf(db_id));
+        }
+
         for (int i = 0; i < fragmentListeners.size(); i++) {
             FragmentListener fragmentListener = fragmentListeners.get(i);
             for (int k = 0; k < weekdays.size(); k++) {
                 if ((fragmentListener.getFragmentName()).equals(String.valueOf(weekdays.get(k)))) {
-                    if (fragmentListener == fragmentListeners.get(0) || fragmentListener == fragmentListeners.get(8)) {
-
-                    } else {
-                        dbAdapter.insertData(sub_name, time, String.valueOf(weekdays.get(k)));
-                    }
-                    fragmentListener.populateList(sub_name, time, String.valueOf(weekdays.get(k)));
+                    fragmentListener.populateList(db_id, sub_name, time, String.valueOf(weekdays.get(k)));
                 }
             }
         }
@@ -178,8 +182,8 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
         for (int index = 0; index < fragmentListeners.size(); index++) {
             FragmentListener fragmentListener = fragmentListeners.get(index);
             for (int secondIndex = 0; secondIndex < dbList.size(); secondIndex++) {
-                if (dbList.get(secondIndex).getDayOfWeek().equals(fragmentListener.getFragmentName())) {
-                    fragmentListener.populateList(dbList.get(secondIndex).getSubjectName(), dbList.get(secondIndex).getTime(), dbList.get(secondIndex).getDayOfWeek());
+                if ((dbList.get(secondIndex).getDayOfWeek()).equals(fragmentListener.getFragmentName())) {
+                    fragmentListener.populateList(dbList.get(secondIndex).getElement_id(), dbList.get(secondIndex).getSubjectName(), dbList.get(secondIndex).getTime(), dbList.get(secondIndex).getDayOfWeek());
                 }
             }
         }
@@ -198,7 +202,7 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
 
             dbList = new ArrayList<>();
             while (cursor.moveToNext()) {
-                dbList.add(new Subject(cursor.getString(1), cursor.getString(2), cursor.getString(3)));
+                dbList.add(new Subject(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3)));
             }
             cursor.close();
             return null;
@@ -218,4 +222,5 @@ public class HomeActivity extends AppCompatActivity implements ListPopulateHandl
 
         }
     }
+
 }

@@ -82,7 +82,7 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        dbAdapter.delete(subjectList.get(pos).getSubjectName(), subjectList.get(pos).getDayOfWeek());
+                        dbAdapter.delete(subjectList.get(pos).getElement_id());
                         if (subjectList.get(pos).getDayOfWeek().equals("MONDAY")) {
                             HomeActivity.fragmentListeners.get(8).updateList(pos);
                         } else if (subjectList.get(pos).getDayOfWeek().equals("SUNDAY")) {

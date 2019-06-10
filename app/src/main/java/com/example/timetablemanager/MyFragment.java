@@ -63,9 +63,9 @@ public class MyFragment extends Fragment implements FragmentListener {
 
 
     @Override
-    public void populateList(String subjectName, String time, String day) {
+    public void populateList(long element_id, String subjectName, String time, String day) {
 
-        subjects.add(new Subject(subjectName, time, day));
+        subjects.add(new Subject(element_id, subjectName, time, day));
         timeTableAdapter.notifyDataSetChanged();
 
     }
