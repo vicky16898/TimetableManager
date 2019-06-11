@@ -43,6 +43,16 @@ public class myDbAdapter {
 
     }
 
+    public void updateDb(long rowId, String name, String time) {
+        SQLiteDatabase db = myHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(myDbHelper.NAME, name);
+        contentValues.put(myDbHelper.TIME, time);
+        db.update(myDbHelper.TABLE_NAME, contentValues, "_id = ?", new String[]{String.valueOf(rowId)});
+
+        db.close();
+    }
+
     static class myDbHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "myDatabase";    // Database Name;
         private static final String TABLE_NAME = "myTable";   // Table Name;

@@ -3,9 +3,9 @@ package adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.example.timetablemanager.HomeActivity;
+import com.example.timetablemanager.EditActivity;
 import com.example.timetablemanager.R;
 import com.example.timetablemanager.Subject;
-
 import java.util.List;
 
 import butterknife.BindView;
@@ -65,7 +64,7 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         final Subject subject = subjectList.get(i);
         final int pos = i;
         myViewHolder.name_of_subject.setText(subject.getSubjectName());
@@ -82,12 +81,8 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
+
                         dbAdapter.delete(subjectList.get(pos).getElement_id());
-                        if (subjectList.get(pos).getDayOfWeek().equals("MONDAY")) {
-                            HomeActivity.fragmentListeners.get(8).updateList(pos);
-                        } else if (subjectList.get(pos).getDayOfWeek().equals("SUNDAY")) {
-                            HomeActivity.fragmentListeners.get(0).updateList(pos);
-                        }
                         subjectList.remove(pos);
 
                         notifyDataSetChanged();
@@ -106,6 +101,16 @@ public class TimeTableAdapter extends RecyclerView.Adapter<TimeTableAdapter.MyVi
                 AlertDialog alert = builder.create();
                 alert.show();
                 return false;
+            }
+        });
+
+        myViewHolder.row_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, EditActivity.class);
+                intent.putExtra("MyObject", subjectList.get(i));
+                intent.putExtra("Position", i);
+                context.startActivity(intent);
             }
         });
 

@@ -1,6 +1,8 @@
 package com.example.timetablemanager;
 
-public class Subject {
+import java.io.Serializable;
+
+public class Subject implements Serializable {
     private long element_id;
     private String subjectName;
     private String time;
@@ -21,6 +23,14 @@ public class Subject {
         return subjectName;
     }
 
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public String getTime() {
         return time;
     }
@@ -28,4 +38,5 @@ public class Subject {
     public String getDayOfWeek() {
         return dayOfWeek;
     }
+
 }

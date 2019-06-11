@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.TimeTableAdapter;
+import adapter.myDbAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -27,6 +28,7 @@ public class MyFragment extends Fragment implements FragmentListener {
     public String fragmentName;
     private List<Subject> subjects = new ArrayList<>();
     private TimeTableAdapter timeTableAdapter;
+    private myDbAdapter adapter;
 
 
     @BindView(R.id.list)
@@ -51,6 +53,8 @@ public class MyFragment extends Fragment implements FragmentListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         ButterKnife.bind(this, view);
+        adapter = new myDbAdapter(getContext());
+        assert getArguments() != null;
         fragmentName = getArguments().getString(ARG_PARAM);
         timeTableAdapter = new TimeTableAdapter(subjects, getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -80,5 +84,13 @@ public class MyFragment extends Fragment implements FragmentListener {
     @Override
     public String getFragmentName() {
         return fragmentName;
+    }
+
+    @Override
+    public void editListItem(int i, String name, String time) {
+        subjects.get(i).setSubjectName(name);
+        subjects.get(i).setTime(time);
+        timeTableAdapter.notifyDataSetChanged();
+        adapter.updateDb(subjects.get(i).getElement_id(), subjects.get(i).getSubjectName(), subjects.get(i).getTime());
     }
 }

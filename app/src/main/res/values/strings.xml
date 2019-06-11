@@ -14,4 +14,5 @@
     <string name="bunk_manager">BUNK MANAGER</string>
     <string name="timetable_manager">TIMETABLE MANAGER</string>
     <string name="nav_bar">NAV BAR</string>
+    <string name="title_activity_edit">EditActivity</string>
 </resources>
